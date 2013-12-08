@@ -34,6 +34,7 @@
 #include "gtkbuildable.h"
 #include "gtkprivate.h"
 #include "gtkwidget.h"
+#include "gtksettings.h"
 
 struct _GtkFontChooserDialogPrivate
 {
@@ -56,7 +57,7 @@ struct _GtkFontChooserDialogPrivate
  * <title>GtkFontChooserDialog as GtkBuildable</title>
  * The GtkFontChooserDialog implementation of the GtkBuildable interface
  * exposes the buttons with the names
- * "select_button" and "cancel_button.
+ * "select_button" and "cancel_button".
  * </refsect2>
  *
  * Since: 3.2
@@ -137,8 +138,6 @@ gtk_font_chooser_dialog_class_init (GtkFontChooserDialogClass *klass)
 					       "/org/gtk/libgtk/gtkfontchooserdialog.ui");
 
   gtk_widget_class_bind_template_child_private (widget_class, GtkFontChooserDialog, fontchooser);
-  gtk_widget_class_bind_template_child_private (widget_class, GtkFontChooserDialog, select_button);
-  gtk_widget_class_bind_template_child_private (widget_class, GtkFontChooserDialog, cancel_button);
   gtk_widget_class_bind_template_callback (widget_class, font_activated_cb);
 }
 
@@ -151,11 +150,19 @@ gtk_font_chooser_dialog_init (GtkFontChooserDialog *fontchooserdiag)
   priv = fontchooserdiag->priv;
 
   gtk_widget_init_template (GTK_WIDGET (fontchooserdiag));
-
+  gtk_dialog_add_buttons (GTK_DIALOG (fontchooserdiag),
+                          _("_Cancel"), GTK_RESPONSE_CANCEL,
+                          _("_Select"), GTK_RESPONSE_OK,
+                          NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (fontchooserdiag), GTK_RESPONSE_OK);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (fontchooserdiag),
                                            GTK_RESPONSE_OK,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
+G_GNUC_END_IGNORE_DEPRECATIONS
+  priv->select_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (fontchooserdiag), GTK_RESPONSE_OK);
+  priv->cancel_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (fontchooserdiag), GTK_RESPONSE_CANCEL);
 
   _gtk_font_chooser_set_delegate (GTK_FONT_CHOOSER (fontchooserdiag),
                                   GTK_FONT_CHOOSER (priv->fontchooser));
@@ -177,8 +184,13 @@ gtk_font_chooser_dialog_new (const gchar *title,
                              GtkWindow   *parent)
 {
   GtkFontChooserDialog *dialog;
+  gboolean use_header;
 
+  g_object_get (gtk_settings_get_default (),
+                "gtk-dialogs-use-header", &use_header,
+                NULL);
   dialog = g_object_new (GTK_TYPE_FONT_CHOOSER_DIALOG,
+                         "use-header-bar", use_header,
                          "title", title,
                          "transient-for", parent,
                          NULL);
