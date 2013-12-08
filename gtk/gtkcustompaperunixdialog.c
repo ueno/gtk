@@ -89,6 +89,9 @@ enum {
 G_DEFINE_TYPE_WITH_PRIVATE (GtkCustomPaperUnixDialog, gtk_custom_paper_unix_dialog, GTK_TYPE_DIALOG)
 
 
+static GObject *gtk_custom_paper_unix_dialog_constructor (GType            type, 
+                                                          guint            n_params,
+                                                          GObjectConstructParam *params);
 static void gtk_custom_paper_unix_dialog_finalize  (GObject                *object);
 static void populate_dialog                        (GtkCustomPaperUnixDialog *dialog);
 static void printer_added_cb                       (GtkPrintBackend        *backend,
@@ -269,6 +272,7 @@ _gtk_print_save_custom_papers (GtkListStore *store)
 static void
 gtk_custom_paper_unix_dialog_class_init (GtkCustomPaperUnixDialogClass *class)
 {
+  G_OBJECT_CLASS (class)->constructor = gtk_custom_paper_unix_dialog_constructor;
   G_OBJECT_CLASS (class)->finalize = gtk_custom_paper_unix_dialog_finalize;
 }
 
@@ -307,13 +311,29 @@ gtk_custom_paper_unix_dialog_init (GtkCustomPaperUnixDialog *dialog)
 
   populate_dialog (dialog);
 
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          _("_Close"), GTK_RESPONSE_CLOSE,
-                          NULL);
-
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CLOSE);
-
   g_signal_connect (dialog, "response", G_CALLBACK (custom_paper_dialog_response_cb), NULL);
+}
+
+static GObject *
+gtk_custom_paper_unix_dialog_constructor (GType            type, 
+                                          guint            n_params,
+                                          GObjectConstructParam *params)
+{
+  GObject *object;
+  gboolean use_header;
+
+  object = G_OBJECT_CLASS (gtk_custom_paper_unix_dialog_parent_class)->constructor (type, n_params, params);
+
+  g_object_get (object, "use-header-bar", &use_header, NULL);
+  if (!use_header)
+    {
+      gtk_dialog_add_buttons (GTK_DIALOG (object),
+                              _("_Close"), GTK_RESPONSE_CLOSE,
+                              NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (object), GTK_RESPONSE_CLOSE);
+    }
+
+  return object;
 }
 
 static void
@@ -381,14 +401,19 @@ gtk_custom_paper_unix_dialog_finalize (GObject *object)
  */
 GtkWidget *
 _gtk_custom_paper_unix_dialog_new (GtkWindow   *parent,
-				  const gchar *title)
+                                   const gchar *title)
 {
   GtkWidget *result;
+  gboolean use_header;
 
   if (title == NULL)
     title = _("Manage Custom Sizes");
 
+  g_object_get (gtk_settings_get_default (),
+                "gtk-dialogs-use-header", &use_header,
+                NULL);
   result = g_object_new (GTK_TYPE_CUSTOM_PAPER_UNIX_DIALOG,
+                         "use-header-bar", use_header,
                          "title", title,
                          "transient-for", parent,
                          "modal", parent != NULL,
@@ -1015,8 +1040,9 @@ populate_dialog (GtkCustomPaperUnixDialog *dialog)
   GtkStyleContext *context;
 
   content_area = gtk_dialog_get_content_area (cpu_dialog);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS 
   action_area = gtk_dialog_get_action_area (cpu_dialog);
-
+G_GNUC_END_IGNORE_DEPRECATIONS 
   gtk_container_set_border_width (GTK_CONTAINER (dialog), 5);
   gtk_box_set_spacing (GTK_BOX (content_area), 2); /* 2 * 5 + 2 = 12 */
   gtk_container_set_border_width (GTK_CONTAINER (action_area), 5);
@@ -1217,6 +1243,5 @@ populate_dialog (GtkCustomPaperUnixDialog *dialog)
       add_custom_paper (dialog);
     }
 
-  gtk_window_present (GTK_WINDOW (dialog));
   load_print_backends (dialog);
 }
