@@ -1352,6 +1352,15 @@ gtk_dialog_get_response_for_widget (GtkDialog *dialog,
     return rd->response_id;
 }
 
+static gboolean
+gtk_alt_dialog_button_order (void)
+{
+  gboolean result;
+  g_object_get (gtk_settings_get_default (),
+		"gtk-alternative-button-order", &result, NULL);
+  return result;
+}
+
 /**
  * gtk_alternative_dialog_button_order:
  * @screen: (allow-none): a #GdkScreen, or %NULL to use the default screen
@@ -1369,28 +1378,18 @@ gtk_dialog_get_response_for_widget (GtkDialog *dialog,
  * Returns: Whether the alternative button order should be used
  *
  * Since: 2.6
+ * Deprecated: 3.10: Deprecated
  */
 gboolean
 gtk_alternative_dialog_button_order (GdkScreen *screen)
 {
-  GtkSettings *settings;
-  gboolean result;
-
-  if (screen)
-    settings = gtk_settings_get_for_screen (screen);
-  else
-    settings = gtk_settings_get_default ();
-
-  g_object_get (settings,
-		"gtk-alternative-button-order", &result, NULL);
-
-  return result;
+  return gtk_alt_dialog_button_order ();
 }
 
 static void
 gtk_dialog_set_alternative_button_order_valist (GtkDialog *dialog,
-                                               gint       first_response_id,
-                                               va_list    args)
+                                                gint       first_response_id,
+                                                va_list    args)
 {
   GtkDialogPrivate *priv = dialog->priv;
   GtkWidget *child;
@@ -1457,13 +1456,13 @@ gtk_dialog_set_alternative_button_order_valist (GtkDialog *dialog,
  * ]|
  *
  * Since: 2.6
+ * Deprecated: 3.10: Deprecated
  */
 void
 gtk_dialog_set_alternative_button_order (GtkDialog *dialog,
 					 gint       first_response_id,
 					 ...)
 {
-  GdkScreen *screen;
   va_list args;
 
   g_return_if_fail (GTK_IS_DIALOG (dialog));
@@ -1471,8 +1470,7 @@ gtk_dialog_set_alternative_button_order (GtkDialog *dialog,
   if (dialog->priv->use_header_bar)
     return;
 
-  screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
-  if (!gtk_alternative_dialog_button_order (screen))
+  if (!gtk_alt_dialog_button_order ())
       return;
 
   va_start (args, first_response_id);
@@ -1499,6 +1497,7 @@ gtk_dialog_set_alternative_button_order (GtkDialog *dialog,
  * This function is for use by language bindings.
  *
  * Since: 2.6
+ * Deprecated: 3.10: Deprecated
  */
 void
 gtk_dialog_set_alternative_button_order_from_array (GtkDialog *dialog,
@@ -1506,7 +1505,6 @@ gtk_dialog_set_alternative_button_order_from_array (GtkDialog *dialog,
                                                     gint      *new_order)
 {
   GtkDialogPrivate *priv = dialog->priv;
-  GdkScreen *screen;
   GtkWidget *child;
   gint position;
 
@@ -1516,9 +1514,8 @@ gtk_dialog_set_alternative_button_order_from_array (GtkDialog *dialog,
   if (dialog->priv->use_header_bar)
     return;
 
-  screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
-  if (!gtk_alternative_dialog_button_order (screen))
-      return;
+  if (!gtk_alt_dialog_button_order ())
+    return;
 
   for (position = 0; position < n_params; position++)
   {
