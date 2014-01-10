@@ -29,6 +29,7 @@
 #include "gtksizerequest.h"
 #include "gtktypebuiltins.h"
 #include "gtkintl.h"
+#include "gtksettings.h"
 
 #include <stdarg.h>
 
@@ -524,10 +525,15 @@ gtk_file_chooser_dialog_new_valist (const gchar          *title,
   GtkWidget *result;
   const char *button_text = first_button_text;
   gint response_id;
+  gboolean use_header;
 
+  g_object_get (gtk_settings_get_default (),
+                "gtk-dialogs-use-header", &use_header,
+                NULL);
   result = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
 			 "title", title,
 			 "action", action,
+                         "use-header-bar", use_header,
 			 NULL);
 
   if (parent)
