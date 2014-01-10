@@ -23,6 +23,7 @@
 #include "gtkrecentchooserutils.h"
 #include "gtkrecentmanager.h"
 #include "gtktypebuiltins.h"
+#include "gtksettings.h"
 
 #include <stdarg.h>
 
@@ -274,8 +275,13 @@ gtk_recent_chooser_dialog_new_valist (const gchar      *title,
   GtkWidget *result;
   const char *button_text = first_button_text;
   gint response_id;
-  
+  gboolean use_header;
+
+  g_object_get (gtk_settings_get_default (),
+                "gtk-dialogs-use-header", &use_header,
+                NULL);
   result = g_object_new (GTK_TYPE_RECENT_CHOOSER_DIALOG,
+                         "use-header-bar", use_header,
                          "title", title,
                          "recent-manager", manager,
                          NULL);
