@@ -32,6 +32,7 @@
 #include "gtkbuildable.h"
 #include "gtklabel.h"
 #include "gtkbox.h"
+#include "gtkbbox.h"
 #include "gtkimage.h"
 #include "gtkintl.h"
 #include "gtkprivate.h"
@@ -305,6 +306,7 @@ static void
 gtk_message_dialog_init (GtkMessageDialog *dialog)
 {
   GtkMessageDialogPrivate *priv;
+  GtkWidget *action_area;
 
   dialog->priv = gtk_message_dialog_get_instance_private (dialog);
   priv = dialog->priv;
@@ -316,6 +318,8 @@ gtk_message_dialog_init (GtkMessageDialog *dialog)
 
   gtk_widget_init_template (GTK_WIDGET (dialog));
   gtk_message_dialog_style_updated (GTK_WIDGET (dialog));
+  action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
+  gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_EXPAND);
 }
 
 static void

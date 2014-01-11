@@ -3,7 +3,7 @@
   <!-- interface-requires gtk+ 3.10 -->
   <template class="GtkMessageDialog" parent="GtkDialog">
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="border_width">0</property>
     <property name="title"> </property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
@@ -18,13 +18,14 @@
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
+        <property name="border_width">0</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">14</property>
+        <property name="spacing">20</property>
         <child>
           <object class="GtkBox" id="box">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="border_width">5</property>
+            <property name="border_width">0</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkImage" id="image">
@@ -35,7 +36,7 @@
                 <property name="stock">gtk-missing-image</property>
                 <property name="use_fallback">True</property>
                 <property name="icon_size">6</property>
-                <property name="xpad">6</property>
+                <property name="xpad">12</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -47,6 +48,7 @@
               <object class="GtkBox" id="message_area">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_end">20</property>
                 <property name="orientation">vertical</property>
                 <property name="spacing">12</property>
                 <child>
