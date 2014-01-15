@@ -200,9 +200,6 @@ enum
   PROP_LICENSE_TYPE
 };
 
-static GObject *            gtk_about_dialog_constructor   (GType                  type, 
-                                                            guint                  n_params,
-                                                            GObjectConstructParam *params);
 static void                 gtk_about_dialog_finalize       (GObject            *object);
 static void                 gtk_about_dialog_get_property   (GObject            *object,
                                                              guint               prop_id,
@@ -293,7 +290,6 @@ gtk_about_dialog_class_init (GtkAboutDialogClass *klass)
   object_class->set_property = gtk_about_dialog_set_property;
   object_class->get_property = gtk_about_dialog_get_property;
 
-  object_class->constructor = gtk_about_dialog_constructor;
   object_class->finalize = gtk_about_dialog_finalize;
 
   widget_class->show = gtk_about_dialog_show;
@@ -590,6 +586,7 @@ gtk_about_dialog_class_init (GtkAboutDialogClass *klass)
 					       "/org/gtk/libgtk/gtkaboutdialog.ui");
 
   gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, stack);
+  gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, stack_switcher);
   gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, logo_image);
   gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, name_label);
   gtk_widget_class_bind_template_child_private (widget_class, GtkAboutDialog, version_label);
@@ -708,51 +705,12 @@ gtk_about_dialog_init (GtkAboutDialog *about)
 
   gtk_widget_init_template (GTK_WIDGET (about));
 
-  /* force defaults */
-  gtk_about_dialog_set_program_name (about, NULL);
-  gtk_about_dialog_set_logo (about, NULL);
-}
-
-static GObject *
-gtk_about_dialog_constructor (GType                  type, 
-                              guint                  n_params,
-                              GObjectConstructParam *params)
-{
-  GObject *object;
-  GtkAboutDialog *about;
-  gboolean use_header_bar;
-  GtkWidget *parent;
-
-  object = G_OBJECT_CLASS (gtk_about_dialog_parent_class)->constructor (type, n_params, params);
-
-  about = GTK_ABOUT_DIALOG (object);
-  about->priv->stack_switcher = gtk_stack_switcher_new ();
-  gtk_widget_set_no_show_all (about->priv->stack_switcher, TRUE);
-  gtk_stack_switcher_set_stack (GTK_STACK_SWITCHER (about->priv->stack_switcher), 
-                                GTK_STACK (about->priv->stack));
-
-  g_object_get (object, "use-header-bar", &use_header_bar, NULL);
-  if (use_header_bar)
-    {
-      parent = gtk_dialog_get_header_bar (GTK_DIALOG (object));
-      gtk_header_bar_set_custom_title (GTK_HEADER_BAR (parent), about->priv->stack_switcher);
-    }
-  else
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      parent = gtk_dialog_get_action_area (GTK_DIALOG (object));
-G_GNUC_END_IGNORE_DEPRECATIONS
-      gtk_container_add (GTK_CONTAINER (parent), about->priv->stack_switcher);
-      gtk_button_box_set_layout (GTK_BUTTON_BOX (parent), GTK_BUTTONBOX_EDGE);
-      gtk_dialog_add_buttons (GTK_DIALOG (object),
-                              _("_Close"), GTK_RESPONSE_CLOSE,
-                              NULL);
-    }
-
   switch_page (about, "main");
   update_stack_switcher_visibility (about);
 
-  return object;
+  /* force defaults */
+  gtk_about_dialog_set_program_name (about, NULL);
+  gtk_about_dialog_set_logo (about, NULL);
 }
 
 static void
@@ -2372,13 +2330,9 @@ GtkWidget *
 gtk_about_dialog_new (void)
 {
   GtkAboutDialog *dialog;
-  gboolean use_header;
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   dialog = g_object_new (GTK_TYPE_ABOUT_DIALOG,
-                         "use-header-bar", use_header,
+                         "use-header-bar", TRUE,
                          NULL);
 
   return GTK_WIDGET (dialog);
