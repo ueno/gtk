@@ -318,7 +318,9 @@ gtk_message_dialog_init (GtkMessageDialog *dialog)
 
   gtk_widget_init_template (GTK_WIDGET (dialog));
   gtk_message_dialog_style_updated (GTK_WIDGET (dialog));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action_area = gtk_dialog_get_action_area (GTK_DIALOG (dialog));
+G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_button_box_set_layout (GTK_BUTTON_BOX (action_area), GTK_BUTTONBOX_EXPAND);
 }
 
@@ -873,6 +875,7 @@ gtk_message_dialog_add_buttons (GtkMessageDialog* message_dialog,
 {
   GtkDialog* dialog = GTK_DIALOG (message_dialog);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   switch (buttons)
     {
     case GTK_BUTTONS_NONE:
@@ -881,29 +884,24 @@ gtk_message_dialog_add_buttons (GtkMessageDialog* message_dialog,
 
     case GTK_BUTTONS_OK:
       gtk_dialog_add_button (dialog,
-                             _("_OK"),
-                             GTK_RESPONSE_OK);
+                             _("_OK"), GTK_RESPONSE_OK);
       break;
 
     case GTK_BUTTONS_CLOSE:
       gtk_dialog_add_button (dialog,
-                             _("_Close"),
-                             GTK_RESPONSE_CLOSE);
+                             _("_Close"), GTK_RESPONSE_CLOSE);
       break;
 
     case GTK_BUTTONS_CANCEL:
       gtk_dialog_add_button (dialog,
-                             _("_Cancel"),
-                             GTK_RESPONSE_CANCEL);
+                             _("_Cancel"), GTK_RESPONSE_CANCEL);
       break;
 
     case GTK_BUTTONS_YES_NO:
       gtk_dialog_add_button (dialog,
-                             _("_No"),
-                             GTK_RESPONSE_NO);
+                             _("_No"), GTK_RESPONSE_NO);
       gtk_dialog_add_button (dialog,
-                             _("_Yes"),
-                             GTK_RESPONSE_YES);
+                             _("_Yes"), GTK_RESPONSE_YES);
       gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
 					       GTK_RESPONSE_YES,
 					       GTK_RESPONSE_NO,
@@ -912,11 +910,9 @@ gtk_message_dialog_add_buttons (GtkMessageDialog* message_dialog,
 
     case GTK_BUTTONS_OK_CANCEL:
       gtk_dialog_add_button (dialog,
-                             _("_Cancel"),
-                             GTK_RESPONSE_CANCEL);
+                             _("_Cancel"), GTK_RESPONSE_CANCEL);
       gtk_dialog_add_button (dialog,
-                             _("_OK"),
-                             GTK_RESPONSE_OK);
+                             _("_OK"), GTK_RESPONSE_OK);
       gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
 					       GTK_RESPONSE_OK,
 					       GTK_RESPONSE_CANCEL,
@@ -927,6 +923,7 @@ gtk_message_dialog_add_buttons (GtkMessageDialog* message_dialog,
       g_warning ("Unknown GtkButtonsType");
       break;
     } 
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   g_object_notify (G_OBJECT (message_dialog), "buttons");
 }
