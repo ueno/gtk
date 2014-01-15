@@ -1721,10 +1721,13 @@ gtk_dialog_buildable_custom_finished (GtkBuildable *buildable,
  *
  * Returns the action area of @dialog.
  *
- * Returns: (transfer none): the action area.
+ * Returns: (transfer none): the action area
  *
  * Since: 2.14
- **/
+ *
+ * Deprecated:3.12: Direct access to the action area
+ *   is discouraged; use gtk_dialog_add_button(), etc.
+ */
 GtkWidget *
 gtk_dialog_get_action_area (GtkDialog *dialog)
 {
@@ -1737,12 +1740,14 @@ gtk_dialog_get_action_area (GtkDialog *dialog)
  * gtk_dialog_get_header_bar:
  * @dialog: a #GtkDialog
  *
- * Returns the header bar of @dialog.
+ * Returns the header bar of @dialog. Note that the
+ * headerbar is only used by the dialog if the
+ * #GtkDialog::use-header-bar property is %TRUE.
  *
- * Returns: (transfer none): the header bar.
+ * Returns: (transfer none): the header bar
  *
  * Since: 3.12
- **/
+ */
 GtkWidget *
 gtk_dialog_get_header_bar (GtkDialog *dialog)
 {
