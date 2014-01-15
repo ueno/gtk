@@ -125,16 +125,16 @@ main (int   argc,
 	multiple = TRUE;
     }
 
-  dialog = g_object_new (GTK_TYPE_RECENT_CHOOSER_DIALOG,
-		         "select-multiple", multiple,
-                         "show-tips", TRUE,
-                         "show-icons", TRUE,
-			 NULL);
-  gtk_window_set_title (GTK_WINDOW (dialog), "Select a file");
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-		  	  "_Cancel", GTK_RESPONSE_CANCEL,
-			  "_Open", GTK_RESPONSE_OK,
-			  NULL);
+  dialog = gtk_recent_chooser_dialog_new ("Select a file",
+                                          GTK_WINDOW (dialog),
+		  	                  "_Cancel", GTK_RESPONSE_CANCEL,
+                                          "_Open", GTK_RESPONSE_OK,
+                                          NULL);
+  g_object_set (dialog,
+		"select-multiple", multiple,
+                "show-tips", TRUE,
+                "show-icons", TRUE,
+		NULL);
   
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
