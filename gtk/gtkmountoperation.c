@@ -48,6 +48,7 @@
 #include "gtkicontheme.h"
 #include "gtkmenuitem.h"
 #include "gtkmain.h"
+#include "gtksettings.h"
 
 #include <glib/gprintf.h>
 
@@ -503,10 +504,16 @@ gtk_mount_operation_ask_password_do_gtk (GtkMountOperation *operation,
   gchar *primary;
   const gchar *secondary;
   PangoAttrList *attrs;
+  gboolean use_header;
 
   priv = operation->priv;
 
-  widget = gtk_dialog_new ();
+  g_object_get (gtk_settings_get_default (),
+                "gtk-dialogs-use-header", &use_header,
+                NULL);
+  widget = g_object_new (GTK_TYPE_DIALOG,
+                         "use-header-bar", use_header,
+                         NULL);
   dialog = GTK_DIALOG (widget);
   window = GTK_WINDOW (widget);
 
@@ -1392,6 +1399,7 @@ create_show_processes_dialog (GtkMountOperation *op,
   GtkCellRenderer *renderer;
   GtkListStore *list_store;
   gchar *s;
+  gboolean use_header;
 
   priv = op->priv;
 
@@ -1402,7 +1410,12 @@ create_show_processes_dialog (GtkMountOperation *op,
       primary = g_strndup (message, primary - message);
     }
 
-  dialog = gtk_dialog_new ();
+  g_object_get (gtk_settings_get_default (),
+                "gtk-dialogs-use-header", &use_header,
+                NULL);
+  dialog = g_object_new (GTK_TYPE_DIALOG,
+                         "gtk-dialogs-use-header", use_header,
+                         NULL);
 
   if (priv->parent_window != NULL)
     gtk_window_set_transient_for (GTK_WINDOW (dialog), priv->parent_window);
