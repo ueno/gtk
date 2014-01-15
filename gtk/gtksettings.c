@@ -215,6 +215,7 @@ enum {
   PROP_SHELL_SHOWS_MENUBAR,
   PROP_SHELL_SHOWS_DESKTOP,
   PROP_DECORATION_LAYOUT,
+  PROP_DIALOGS_USE_HEADER,
   PROP_ENABLE_PRIMARY_PASTE,
   PROP_RECENT_FILES_ENABLED
 };
@@ -1574,6 +1575,15 @@ gtk_settings_class_init (GtkSettingsClass *class)
                                                                    "menu:close", GTK_PARAM_READWRITE),
                                              NULL);
   g_assert (result == PROP_DECORATION_LAYOUT);
+
+  result = settings_install_property_parser (class,
+                                             g_param_spec_boolean ("gtk-dialogs-use-header",
+                                                                   P_("Dialogs use header bar"),
+                                                                   P_("Whether GTK+ dialogs should use a header bar instead of an action area."),
+                                                                   FALSE,
+                                                                   GTK_PARAM_READWRITE),
+                                             NULL);
+  g_assert (result == PROP_DIALOGS_USE_HEADER);
 
   /**
    * GtkSettings:gtk-enable-primary-paste:
