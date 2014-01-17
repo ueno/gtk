@@ -247,6 +247,7 @@ set_use_header_bar (GtkDialog *dialog,
   priv->use_header_bar = use_header_bar;
 }
 
+/* A convenience helper for built-in dialogs */
 void
 gtk_dialog_set_use_header_bar_from_setting (GtkDialog *dialog)
 {
@@ -260,8 +261,15 @@ gtk_dialog_set_use_header_bar_from_setting (GtkDialog *dialog)
 }
 
 static void
-add_cb (GtkContainer *container, GtkWidget *widget)
+add_cb (GtkContainer *container,
+        GtkWidget    *widget,
+        GtkDialog    *dialog)
 {
+  GtkDialogPrivate *priv = dialog->priv;
+
+  if (priv->use_header_bar)
+    g_warning ("Content added to the action area of a dialog using header bars");
+
   gtk_widget_show (GTK_WIDGET (container));
 }
 
@@ -278,7 +286,7 @@ apply_use_header_bar (GtkDialog *dialog)
   if (!priv->use_header_bar)
     gtk_window_set_titlebar (GTK_WINDOW (dialog), NULL);
   if (priv->use_header_bar)
-    g_signal_connect (priv->action_area, "add", add_cb, NULL);
+    g_signal_connect (priv->action_area, "add", G_CALLBACK (add_cb), dialog);
 }
 
 static void
