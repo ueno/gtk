@@ -197,7 +197,8 @@ GDK_AVAILABLE_IN_ALL
 GtkWidget * gtk_dialog_get_content_area (GtkDialog *dialog);
 GDK_AVAILABLE_IN_3_12
 GtkWidget * gtk_dialog_get_header_bar   (GtkDialog *dialog);
-
+GDK_AVAILABLE_IN_3_12
+gboolean    gtk_dialog_get_use_header_bar (GtkDialog *dialog);
 G_END_DECLS
 
 #endif /* __GTK_DIALOG_H__ */

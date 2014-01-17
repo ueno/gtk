@@ -806,8 +806,7 @@ gtk_print_unix_dialog_constructor (GType                  type,
 
   object = G_OBJECT_CLASS (gtk_print_unix_dialog_parent_class)->constructor (type, n_params, params);
 
-  g_object_get (object, "use-header-bar", &use_header, NULL);
-  if (use_header)
+  if (gtk_dialog_get_use_header_bar (GTK_DIALOG (object)))
     {
        /* Reorder the preview button */
        GtkWidget *button, *parent;

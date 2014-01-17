@@ -436,7 +436,6 @@ ensure_software_button (GtkAppChooserDialog *self)
   if (g_find_program_in_path ("gnome-software"))
     {
       GtkWidget *parent;
-      gboolean use_header;
 
       self->priv->software_button = gtk_button_new_with_label (_("Software"));
       gtk_button_set_always_show_image (GTK_BUTTON (self->priv->software_button), TRUE);
@@ -446,8 +445,7 @@ ensure_software_button (GtkAppChooserDialog *self)
                         G_CALLBACK (software_button_clicked_cb), self);
       gtk_widget_show (self->priv->software_button);
       
-      g_object_get (self, "use-header-bar", &use_header, NULL);
-      if (use_header)
+      if (gtk_dialog_get_use_header_bar (GTK_DIALOG (self)))
         {
           parent = gtk_dialog_get_header_bar (GTK_DIALOG (self));
           gtk_header_bar_pack_end (GTK_HEADER_BAR (parent), self->priv->software_button);

@@ -1799,3 +1799,24 @@ gtk_dialog_get_content_area (GtkDialog *dialog)
 
   return dialog->priv->vbox;
 }
+
+/**
+ * gtk_dialog_get_use_header_bar:
+ * @dialog: a #GtkDialog
+ *
+ * Returns whether the dialog is using a header
+ * bar for action widgets instead of the action
+ * area.
+ *
+ * Returns: %TRUE if the header bar is used
+ *
+ * Since: 3.12
+ */
+gboolean
+gtk_dialog_get_use_header_bar (GtkDialog *dialog)
+{
+  g_return_val_if_fail (GTK_IS_DIALOG (dialog), FALSE);
+
+  return dialog->priv->use_header_bar;
+}
+

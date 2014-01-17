@@ -323,12 +323,10 @@ gtk_custom_paper_unix_dialog_constructor (GType            type,
                                           GObjectConstructParam *params)
 {
   GObject *object;
-  gboolean use_header;
 
   object = G_OBJECT_CLASS (gtk_custom_paper_unix_dialog_parent_class)->constructor (type, n_params, params);
 
-  g_object_get (object, "use-header-bar", &use_header, NULL);
-  if (!use_header)
+  if (!gtk_dialog_get_use_header_bar (GTK_DIALOG (object)))
     {
       gtk_dialog_add_buttons (GTK_DIALOG (object),
                               _("_Close"), GTK_RESPONSE_CLOSE,
