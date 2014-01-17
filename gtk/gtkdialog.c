@@ -260,6 +260,12 @@ gtk_dialog_set_use_header_bar_from_setting (GtkDialog *dialog)
 }
 
 static void
+add_cb (GtkContainer *container, GtkWidget *widget)
+{
+  gtk_widget_show (GTK_WIDGET (container));
+}
+
+static void
 apply_use_header_bar (GtkDialog *dialog)
 {
   GtkDialogPrivate *priv = dialog->priv;
@@ -271,6 +277,8 @@ apply_use_header_bar (GtkDialog *dialog)
   gtk_widget_set_visible (priv->headerbar, priv->use_header_bar);
   if (!priv->use_header_bar)
     gtk_window_set_titlebar (GTK_WINDOW (dialog), NULL);
+  if (priv->use_header_bar)
+    g_signal_connect (priv->action_area, "add", add_cb, NULL);
 }
 
 static void
