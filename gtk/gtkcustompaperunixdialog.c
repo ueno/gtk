@@ -37,6 +37,7 @@
 #include "gtkcustompaperunixdialog.h"
 #include "gtkprintbackend.h"
 #include "gtkprintutils.h"
+#include "gtkdialogprivate.h"
 
 #define LEGACY_CUSTOM_PAPER_FILENAME ".gtk-custom-papers"
 #define CUSTOM_PAPER_FILENAME "custom-papers"
@@ -295,6 +296,8 @@ gtk_custom_paper_unix_dialog_init (GtkCustomPaperUnixDialog *dialog)
   dialog->priv = gtk_custom_paper_unix_dialog_get_instance_private (dialog);
   priv = dialog->priv;
 
+  gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (dialog));
+
   priv->print_backends = NULL;
 
   priv->request_details_printer = NULL;
@@ -404,16 +407,11 @@ _gtk_custom_paper_unix_dialog_new (GtkWindow   *parent,
                                    const gchar *title)
 {
   GtkWidget *result;
-  gboolean use_header;
 
   if (title == NULL)
     title = _("Manage Custom Sizes");
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   result = g_object_new (GTK_TYPE_CUSTOM_PAPER_UNIX_DIALOG,
-                         "use-header-bar", use_header,
                          "title", title,
                          "transient-for", parent,
                          "modal", parent != NULL,

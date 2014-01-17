@@ -35,6 +35,7 @@
 #include "gtkprivate.h"
 #include "gtkwidget.h"
 #include "gtksettings.h"
+#include "gtkdialogprivate.h"
 
 struct _GtkFontChooserDialogPrivate
 {
@@ -150,6 +151,7 @@ gtk_font_chooser_dialog_init (GtkFontChooserDialog *fontchooserdiag)
   priv = fontchooserdiag->priv;
 
   gtk_widget_init_template (GTK_WIDGET (fontchooserdiag));
+  gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (fontchooserdiag));
   gtk_dialog_add_buttons (GTK_DIALOG (fontchooserdiag),
                           _("_Cancel"), GTK_RESPONSE_CANCEL,
                           _("_Select"), GTK_RESPONSE_OK,
@@ -184,13 +186,8 @@ gtk_font_chooser_dialog_new (const gchar *title,
                              GtkWindow   *parent)
 {
   GtkFontChooserDialog *dialog;
-  gboolean use_header;
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   dialog = g_object_new (GTK_TYPE_FONT_CHOOSER_DIALOG,
-                         "use-header-bar", use_header,
                          "title", title,
                          "transient-for", parent,
                          NULL);

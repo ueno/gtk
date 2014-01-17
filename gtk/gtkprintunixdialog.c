@@ -55,6 +55,7 @@
 #include "gtkintl.h"
 #include "gtkprivate.h"
 #include "gtktypebuiltins.h"
+#include "gtkdialogprivate.h"
 
 
 /**
@@ -737,6 +738,7 @@ gtk_print_unix_dialog_init (GtkPrintUnixDialog *dialog)
   priv->has_selection = FALSE;
 
   gtk_widget_init_template (GTK_WIDGET (dialog));
+  gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (dialog));
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           _("Pre_view"), GTK_RESPONSE_APPLY,
                           _("_Cancel"), GTK_RESPONSE_CANCEL,
@@ -3300,13 +3302,8 @@ gtk_print_unix_dialog_new (const gchar *title,
                            GtkWindow   *parent)
 {
   GtkWidget *result;
-  gboolean use_header;
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   result = g_object_new (GTK_TYPE_PRINT_UNIX_DIALOG,
-                         "use-header-bar", use_header,
                          "transient-for", parent,
                          "title", title ? title : _("Print"),
                          NULL);

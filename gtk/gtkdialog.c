@@ -175,7 +175,7 @@ struct _GtkDialogPrivate
   GtkWidget *headerbar;
   GtkWidget *action_area;
 
-  gboolean use_header_bar;
+  gint use_header_bar;
   gboolean constructed;
   GList *action_widgets;
   gint default_response;
@@ -235,13 +235,38 @@ G_DEFINE_TYPE_WITH_CODE (GtkDialog, gtk_dialog, GTK_TYPE_WINDOW,
 			 G_IMPLEMENT_INTERFACE (GTK_TYPE_BUILDABLE,
 						gtk_dialog_buildable_interface_init))
 
-static void
+void
 set_use_header_bar (GtkDialog *dialog,
                     gboolean   use_header_bar)
 {
   GtkDialogPrivate *priv = dialog->priv;
 
+  if (use_header_bar == -1)
+    return;
+
   priv->use_header_bar = use_header_bar;
+}
+
+void
+gtk_dialog_set_use_header_bar_from_setting (GtkDialog *dialog)
+{
+  GtkDialogPrivate *priv = dialog->priv;
+
+  g_assert (!priv->constructed);
+
+  g_object_get (gtk_widget_get_settings (GTK_WIDGET (dialog)),
+                "gtk-dialogs-use-header", &priv->use_header_bar,
+                NULL);
+}
+
+static void
+apply_use_header_bar (GtkDialog *dialog)
+{
+  GtkDialogPrivate *priv = dialog->priv;
+
+  if (priv->use_header_bar == -1)
+    priv->use_header_bar = FALSE;
+
   gtk_widget_set_visible (priv->action_area, !priv->use_header_bar);
   gtk_widget_set_visible (priv->headerbar, priv->use_header_bar);
   if (!priv->use_header_bar)
@@ -259,7 +284,7 @@ gtk_dialog_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_USE_HEADER_BAR:
-      set_use_header_bar (dialog, g_value_get_boolean (value));
+      set_use_header_bar (dialog, g_value_get_int (value));
       break;
 
     default:
@@ -280,7 +305,7 @@ gtk_dialog_get_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_USE_HEADER_BAR:
-      g_value_set_boolean (value, priv->use_header_bar);
+      g_value_set_int (value, priv->use_header_bar);
       break;
 
     default:
@@ -411,8 +436,8 @@ gtk_dialog_constructor (GType                  type,
 
   priv->constructed = TRUE;
 
-  if (priv->action_widgets != NULL)
-    add_action_widgets (dialog);
+  apply_use_header_bar (dialog);
+  add_action_widgets (dialog);
 
   return object;
 }
@@ -530,12 +555,12 @@ gtk_dialog_class_init (GtkDialogClass *class)
    * Since: 3.12
    */
   g_object_class_install_property (gobject_class,
-				   PROP_USE_HEADER_BAR,
-				   g_param_spec_boolean ("use-header-bar",
-							 P_("Use Header Bar"),
-							 P_("Use Header Bar for actions."),
-							 FALSE,
-							 GTK_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+                                   PROP_USE_HEADER_BAR,
+                                   g_param_spec_int ("use-header-bar",
+                                                     P_("Use Header Bar"),
+                                                     P_("Use Header Bar for actions."),
+                                                     -1, 1, -1,
+                                                     GTK_PARAM_READWRITE|G_PARAM_CONSTRUCT_ONLY));
 
   binding_set = gtk_binding_set_by_class (class);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "close", 0);
@@ -584,6 +609,7 @@ gtk_dialog_init (GtkDialog *dialog)
 {
   dialog->priv = gtk_dialog_get_instance_private (dialog);
 
+  dialog->priv->use_header_bar = -1;
   dialog->priv->default_response = GTK_RESPONSE_NONE;
 
   gtk_widget_init_template (GTK_WIDGET (dialog));

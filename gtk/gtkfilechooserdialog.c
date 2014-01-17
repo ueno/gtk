@@ -30,6 +30,7 @@
 #include "gtktypebuiltins.h"
 #include "gtkintl.h"
 #include "gtksettings.h"
+#include "gtkdialogprivate.h"
 
 #include <stdarg.h>
 
@@ -263,6 +264,7 @@ gtk_file_chooser_dialog_init (GtkFileChooserDialog *dialog)
   dialog->priv->response_requested = FALSE;
 
   gtk_widget_init_template (GTK_WIDGET (dialog));
+  gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (dialog));
 
   _gtk_file_chooser_set_delegate (GTK_FILE_CHOOSER (dialog),
 				  GTK_FILE_CHOOSER (dialog->priv->widget));
@@ -525,15 +527,10 @@ gtk_file_chooser_dialog_new_valist (const gchar          *title,
   GtkWidget *result;
   const char *button_text = first_button_text;
   gint response_id;
-  gboolean use_header;
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   result = g_object_new (GTK_TYPE_FILE_CHOOSER_DIALOG,
 			 "title", title,
 			 "action", action,
-                         "use-header-bar", use_header,
 			 NULL);
 
   if (parent)

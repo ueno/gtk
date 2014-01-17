@@ -52,6 +52,7 @@
 #include "gtkbutton.h"
 #include "gtkmenuitem.h"
 #include "gtkheaderbar.h"
+#include "gtkdialogprivate.h"
 
 #include <string.h>
 #include <glib/gi18n-lib.h>
@@ -619,6 +620,7 @@ gtk_app_chooser_dialog_init (GtkAppChooserDialog *self)
   self->priv = gtk_app_chooser_dialog_get_instance_private (self);
 
   gtk_widget_init_template (GTK_WIDGET (self));
+  gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (self));
   gtk_dialog_add_buttons (GTK_DIALOG (self),
                           _("_Cancel"), GTK_RESPONSE_CANCEL,
                           _("_Select"), GTK_RESPONSE_OK,
@@ -673,15 +675,10 @@ gtk_app_chooser_dialog_new (GtkWindow      *parent,
                             GFile          *file)
 {
   GtkWidget *retval;
-  gboolean use_header;
 
   g_return_val_if_fail (G_IS_FILE (file), NULL);
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   retval = g_object_new (GTK_TYPE_APP_CHOOSER_DIALOG,
-                         "use-header-bar", use_header,
                          "gfile", file,
                          NULL);
 
@@ -709,15 +706,10 @@ gtk_app_chooser_dialog_new_for_content_type (GtkWindow      *parent,
                                              const gchar    *content_type)
 {
   GtkWidget *retval;
-  gboolean use_header;
 
   g_return_val_if_fail (content_type != NULL, NULL);
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
   retval = g_object_new (GTK_TYPE_APP_CHOOSER_DIALOG,
-                         "use-header-bar", use_header,
                          "content-type", content_type,
                          NULL);
 

@@ -18,6 +18,7 @@
 #include "config.h"
 
 #include "gtkdialog.h"
+#include "gtkdialogprivate.h"
 #include "gtkbutton.h"
 #include "gtkbox.h"
 #include "gtkprivate.h"
@@ -104,6 +105,7 @@ gtk_color_chooser_dialog_init (GtkColorChooserDialog *cc)
   cc->priv = gtk_color_chooser_dialog_get_instance_private (cc);
 
   gtk_widget_init_template (GTK_WIDGET (cc));
+  gtk_dialog_set_use_header_bar_from_setting (GTK_DIALOG (cc));
   gtk_dialog_add_buttons (GTK_DIALOG (cc),
                           _("_Cancel"), GTK_RESPONSE_CANCEL,
                           _("_Select"), GTK_RESPONSE_OK,
@@ -277,14 +279,8 @@ gtk_color_chooser_dialog_new (const gchar *title,
                               GtkWindow   *parent)
 {
   GtkColorChooserDialog *dialog;
-  gboolean use_header;
 
-  g_object_get (gtk_settings_get_default (),
-                "gtk-dialogs-use-header", &use_header,
-                NULL);
-  g_print ("use header: %d\n", use_header);
   dialog = g_object_new (GTK_TYPE_COLOR_CHOOSER_DIALOG,
-                         "use-header-bar", use_header,
                          "title", title,
                          "transient-for", parent,
                          NULL);
