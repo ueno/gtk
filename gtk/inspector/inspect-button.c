@@ -269,6 +269,19 @@ on_highlight_widget (GtkWidget          *button,
   start_flash (iw, widget);
 }
 
+static void
+set_empty_input_shape (GtkWidget *widget)
+{
+  cairo_rectangle_int_t rect;
+  cairo_region_t *region;
+
+  rect.x = 0; rect.y = 0;
+  rect.width = 0; rect.height = 0;
+  region = cairo_region_create_rectangle (&rect);
+  gtk_widget_input_shape_combine_region (widget, region);
+  cairo_region_destroy (region);
+}
+
 static gboolean
 property_query_event (GtkWidget *widget,
                       GdkEvent  *event,
@@ -282,6 +295,9 @@ property_query_event (GtkWidget *widget,
       gtk_grab_remove (widget);
       if (iw->grabbed)
         gdk_device_ungrab (gdk_event_get_device (event), GDK_CURRENT_TIME);
+      //gdk_window_raise (gtk_widget_get_window (GTK_WIDGET (iw)));
+      gtk_widget_set_opacity (GTK_WIDGET (iw), 1.0);
+      gtk_widget_input_shape_combine_region (iw, NULL);
       on_inspect_widget (widget, event, data);
     }
   else if (event->type == GDK_MOTION_NOTIFY)
@@ -300,7 +316,9 @@ property_query_event (GtkWidget *widget,
           device = gdk_device_get_associated_device (gdk_event_get_device (event));
           if (iw->grabbed)
             gdk_device_ungrab (device, GDK_CURRENT_TIME);
-          gdk_window_raise (gtk_widget_get_window (GTK_WIDGET (iw)));
+          //gdk_window_raise (gtk_widget_get_window (GTK_WIDGET (iw)));
+          gtk_widget_set_opacity (GTK_WIDGET (iw), 1.0);
+          gtk_widget_input_shape_combine_region (iw, NULL);
           clear_flash (iw);
         }
     }
@@ -344,7 +362,9 @@ gtk_inspector_on_inspect (GtkWidget          *button,
   g_signal_connect (iw->invisible, "event", G_CALLBACK (property_query_event), iw);
 
   gtk_grab_add (GTK_WIDGET (iw->invisible));
-  gdk_window_lower (gtk_widget_get_window (GTK_WIDGET (iw)));
+  //gdk_window_lower (gtk_widget_get_window (GTK_WIDGET (iw)));
+  gtk_widget_set_opacity (GTK_WIDGET (iw), 0.3);
+  set_empty_input_shape (GTK_WIDGET (iw));
 }
 
 static gboolean
