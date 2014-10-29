@@ -902,7 +902,7 @@ else
    fi
 fi
 
-all_immodules="am-et,cedilla,cyrillic-translit,inuktitut,ipa,multipress,thai,ti-er,ti-et,viqr$backend_immodules"
+all_immodules="am-et,cedilla,cyrillic-translit,dbus,inuktitut,ipa,multipress,thai,ti-er,ti-et,viqr$backend_immodules"
 
 included_immodules=""
 # If the switch specified without listing any specific ones, include all
@@ -949,6 +949,7 @@ AM_CONDITIONAL(INCLUDE_IM_TI_ER, [test x"$INCLUDE_ti_er" = xyes])
 AM_CONDITIONAL(INCLUDE_IM_TI_ET, [test x"$INCLUDE_ti_et" = xyes])
 AM_CONDITIONAL(INCLUDE_IM_VIQR, [test x"$INCLUDE_viqr" = xyes])
 AM_CONDITIONAL(INCLUDE_IM_XIM, [test x"$INCLUDE_xim" = xyes])
+AM_CONDITIONAL(INCLUDE_IM_DBUS, [test x"$INCLUDE_dbus" = xyes])
 
 # Checks to see whether we should include mediaLib
 # support.

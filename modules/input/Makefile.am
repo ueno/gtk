@@ -192,6 +192,21 @@ endif
 imconffiledir = $(sysconfdir)/gtk-3.0
 dist_imconffile_DATA = im-multipress.conf
 
+im_dbus_la_CPPFLAGS = $(AM_CPPFLAGS)
+libstatic_im_dbus_la_CPPFLAGS = $(im_dbus_la_CPPFLAGS)
+im_dbus_la_LDFLAGS = -rpath $(moduledir) -avoid-version -module $(no_undefined)
+im_dbus_la_SOURCES =				\
+	gtkimcontextdbus.c			\
+	gtkimcontextdbus.h			\
+	imdbus.c
+libstatic_im_dbus_la_SOURCES = $(im_dbus_la_SOURCES)
+im_dbus_la_LIBADD = $(LDADDS)
+if INCLUDE_IM_DBUS
+STATIC_DBUS_MODULE = libstatic-im-dbus.la
+else
+DBUS_MODULE = im-dbus.la
+endif
+
 if CROSS_COMPILING
 RUN_QUERY_IMMODULES_TEST=false
 else
@@ -228,6 +243,7 @@ module_LTLIBRARIES =			\
 	$(AM_ET_MODULE)			\
 	$(CEDILLA_MODULE)		\
 	$(CYRILLIC_TRANSLIT_MODULE)	\
+	$(DBUS_MODULE)                  \
 	$(IME_MODULE)			\
 	$(INUKTITUT_MODULE)		\
 	$(IPA_MODULE)			\
@@ -246,6 +262,7 @@ noinst_LTLIBRARIES =				\
 	$(STATIC_AM_ET_MODULE)			\
 	$(STATIC_CEDILLA_MODULE)		\
 	$(STATIC_CYRILLIC_TRANSLIT_MODULE)	\
+	$(STATIC_DBUS_MODULE)                   \
 	$(STATIC_IME_MODULE)			\
 	$(STATIC_INUKTITUT_MODULE)		\
 	$(STATIC_IPA_MODULE)			\
